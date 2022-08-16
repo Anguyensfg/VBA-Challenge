@@ -1,0 +1,377 @@
+Attribute VB_Name = "Module1"
+Sub Step1_Collate_Table()
+
+' Add titles to new columns
+
+    Range("I1").Value = "Ticker"
+    Range("J1").Value = "Yearly Change"
+    Range("K1").Value = "Percentage Change"
+    Range("L1").Value = "Total Stock Volume"
+
+
+  ' Set an initial variable for ticker as ASX code
+  Dim ASX_Code As String
+
+  ' Set an initial variable for holding the total per ASX code
+  
+  Dim ASX_Total As Double
+  ASX_Total = 0
+  
+    ' Keep track of the location for each ASX Code in the summary table
+    
+  Dim Summary_Table_Row As Integer
+  Summary_Table_Row = 2
+  
+   ' Loop through all Share Code
+   
+  For Z = 2 To 760000
+  
+      ' Check if we are still within the same ASX Code, if it is not...
+    If Cells(Z + 1, 1).Value <> Cells(Z, 1).Value Then
+
+  ' Set the ASX Code
+      ASX_Code = Cells(Z, 1).Value
+      
+       ' Add to the ASX Total
+      ASX_Total = ASX_Total + Cells(Z, 7).Value
+      
+      
+      ' Transfer to ASX Code in the Summary Table
+      Range("i" & Summary_Table_Row).Value = ASX_Code
+
+
+      ' Transfer to ASX Code Amount to the Summary Table
+      Range("l" & Summary_Table_Row).Value = ASX_Total
+      
+            ' Add one to the summary table row
+      Summary_Table_Row = Summary_Table_Row + 1
+
+
+    ' Reset the ASX Code Total
+      ASX_Total = 0
+      
+          ' If the cell immediately following a row is the same ASX Code...
+    Else
+      
+         ' Add to the ASX Total
+      ASX_Total = ASX_Total + Cells(Z, 7).Value
+
+    End If
+
+  Next Z
+
+End Sub
+
+Sub Step2_YearlyChangeClosed()
+
+  ' Set an initial variable for ticker as ASX code
+  Dim ASX_Code As String
+
+  ' Set an initial variable for holding the total per ASX code
+  
+  Dim ASX_Total As Double
+  ASX_Total = 0
+  
+    ' Keep track of the location for each ASX Code in the summary table
+    
+  Dim Summary_Table_Row As Integer
+  Summary_Table_Row = 2
+  
+   ' Loop through all ASX Code
+   
+  For Z = 2 To 760000
+  
+  ' Set an initial variable for close price as ASX_CP
+  Dim ASX_CP As String
+
+
+      ' Check if we are still within the same ASX Code, if it is not...
+    If Cells(Z + 1, 1).Value <> Cells(Z, 1).Value Then
+
+      
+          ' Add ASX_Code Closed price
+      ASX_CP = Cells(Z, 6).Value
+      
+            ' Print the ASX Closed Price in the Summary Table
+      Range("AB" & Summary_Table_Row).Value = ASX_CP
+      
+                  ' Add one to the summary table row
+      Summary_Table_Row = Summary_Table_Row + 1
+      
+        ' Reset the ASX Closed Price
+      ASX_CP = 0
+      
+
+      
+ End If
+
+  Next Z
+  
+  
+End Sub
+
+
+Sub Step3_Changeopen()
+
+
+
+  ' Set an initial variable for ticker as ASX code
+  Dim ASX_Code As String
+
+  ' Set an initial variable for holding the total per ASX code
+  
+  Dim ASX_Total As Double
+  ASX_Total = 0
+  
+    ' Keep track of the location for each ASX Code in the summary table
+    
+  Dim Summary_Table_Row As Integer
+  Summary_Table_Row = 2
+  
+   ' Loop through all ASX Code
+   
+  For Z = 2 To 760000
+  
+  ' Set an initial variable for close price as ASX_OP
+  Dim ASX_OP As String
+
+
+      ' Check if we are still within the same ASX Code, if it is not...
+    If Cells(Z + 1, 1).Value <> Cells(Z, 1).Value Then
+
+      
+          ' Add ASX_Code Open price
+      ASX_OP = Cells(Z + 1, 3).Value
+      
+            ' Print the ASX Closed Price in the Summary Table
+      Range("AC" & Summary_Table_Row).Value = ASX_OP
+      
+                  ' Add one to the summary table row
+      Summary_Table_Row = Summary_Table_Row + 1
+      
+        ' Reset the ASX Open Price
+      ASX_OP = 0
+      
+
+      
+ End If
+
+  Next Z
+  
+    'Add opening price of first ASX code to the start of column
+
+Range("AC2").Select
+    Selection.Insert Shift:=xlDown, CopyOrigin:=xlFormatFromLeftOrAbove
+
+Range("C2").Copy
+Range("AC2").Select
+ActiveSheet.Paste
+
+'Clear Range(K2)
+
+    Range("K2").Select
+    Application.CutCopyMode = False
+    Selection.ClearContents
+  
+  
+End Sub
+
+Sub Step4_Apply_calculations()
+
+'Calculate difference between closing price "ASXCP" from column AB and open price "ASXOP" FROM COLUMN AC
+
+  Dim ASXOP As Double
+  
+   Dim ASXCP As Double
+
+   Dim Subtract
+   
+   Dim LastRow As Long
+
+      ' Loop through all ASX Code
+   
+  For Z = 2 To 3001
+
+  ' Subtract the difference between Closed Price and Open price then go down the list
+   
+   Cells(Z, 10).Value = Cells(Z, 28).Value - Cells(Z, 29).Value
+
+
+
+  Next Z
+  
+        ' Loop through all ASX Code
+   
+  For Z = 2 To 3001
+  
+  ' Calculate the percentage change = (Open price - closed price) / closed price
+  
+     Cells(Z, 11).Value = ((Cells(Z, 28).Value - Cells(Z, 29).Value) / (Cells(Z, 29).Value))
+     
+
+
+  Next Z
+  
+  ' Remove raw data set to calculate yearly change and percentage change
+
+        Columns("AB:AC").Select
+    Selection.ClearContents
+    Range("M1").Select
+
+    
+End Sub
+
+
+Sub step5_Formatting_Yearly_Change()
+
+
+      ' Loop through yearly change figures
+   
+  For Z = 2 To 3001
+
+  ' if value is greater than 0 then highlight cell in Green
+  
+  If Cells(Z, 10).Value > 0 Then
+
+
+      ' Colour Green cell
+      Cells(Z, 10).Interior.ColorIndex = 4
+
+
+  ' if value is less than 0 then highlight cell in Red
+  ElseIf Cells(Z, 10).Value < 0 Then
+
+
+
+      ' Colour cell red
+      Cells(Z, 10).Interior.ColorIndex = 3
+      
+        ' change font to white
+      Cells(Z, 10).Font.Color = vbWhite
+
+
+ 
+
+  '  if value is equal to 0 then highlight cell in blue
+  ElseIf Cells(Z, 10).Value = 0 Then
+
+  
+
+      ' Colour cell blue
+      Cells(Z, 10).Interior.ColorIndex = 5
+      
+      ' change font to blue
+      Cells(Z, 10).Font.Color = vbWhite
+
+
+
+
+ End If
+
+  Next Z
+
+End Sub
+
+Sub step6_coverting_percentage()
+
+      ' Loop through all ASX Code
+   
+  For Z = 2 To 3001
+
+'Coverting column k - Percentage Change to percentage % with 2 decimal places
+
+Cells(Z, 11).Value = FormatPercent(Cells(Z, 11))
+
+
+
+  Next Z
+
+End Sub
+
+Sub Step7_Bonus_Questions()
+
+' Add titles to Bonus Questions Table
+
+    Range("W1").Value = "Ticker"
+    Range("X1").Value = "Value"
+    Range("V2").Value = "Greatest % Increase"
+    Range("V3").Value = "Greatest % Decrease"
+    Range("V4").Value = "Greatest Total Volume"
+
+    
+' Search for the maximum value in Percentage Change (Column K) and return to Cell W3
+
+    Dim PCmaX As Double
+    PCmaX = WorksheetFunction.Max(Range("k1:k3001"))
+    Range("X2").Value = PCmaX
+    
+    
+' Search for the Minimum value in Percentage Change (Column K) and return to Cell W4
+
+    Dim PCmin As Double
+    PCmin = WorksheetFunction.Min(Range("k1:k3001"))
+    Range("X3").Value = PCmin
+    
+' Search for the Maximum value in Total Stock Volume (Column L) and return to Cell W5
+
+    Dim TSVmax As Double
+    TSVmax = WorksheetFunction.Max(Range("L1:L3001"))
+    Range("X4").Value = TSVmax
+    
+    
+End Sub
+
+Sub Step8_Allocating_ASX()
+
+    ' Create figures as variables to reference data and return ASX code
+    Dim PCmaX As String
+    Dim PCmin As String
+    Dim TCVmax As String
+    
+    
+
+
+    ' Establish the absolute figures
+    
+    PCmaX = Range("X2").Value
+    PCmin = Range("X3").Value
+    TCVmax = Range("X4").Value
+  
+
+
+    ' Loop through each ASX code
+    For i = 2 To 3001
+
+        ' Check against figures to return ASX code
+        
+        
+        If Cells(i, 11).Value = PCmaX Then
+        Range("W2").Value = Cells(i, 9).Value
+        
+        End If
+        
+        Next i
+        
+        For i = 2 To 3001
+        
+        If Cells(i, 11).Value = PCmin Then
+        Range("W3").Value = Cells(i, 9).Value
+        
+        End If
+        
+        
+        Next i
+        
+        For i = 2 To 3001
+        
+        If Cells(i, 12).Value = TCVmax Then
+        Range("W4").Value = Cells(i, 9).Value
+    
+                  
+           End If
+
+Next i
+
+
+End Sub
+
