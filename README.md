@@ -4,13 +4,21 @@ VBA - Assignment Files
 Excel File included with macro and table to run through step by step process 
 
 Step 1 - Creating Table - Removing ASX duplicates and suming total stock volume (Refer to Macro - Sub Step1_Collate_Table() )
+
 Step 2 - Creating a list of closed price against ASX (Refer to Macro - Sub Step2_YearlyChangeClosed() )
+
 Step 3 - Creating a list of open prices against ASX (Refer to Macro - Sub Step3_Changeopen())
+
 Step 4 - Calculating the Yearly percentage change and percentage change (Refer to Macro - Sub Step4_Apply_calculations())
+
 Step 5 - Formatting Yearly Change (Refer to Macro - Sub step5_Formatting_Yearly_Change() )
+
 Step 6 - Formatting Percentage Change (Refer to Macro - Sub step6_coverting_percentage() )
+
 Step 7 - Creating Table and Listing the target outputs (Refer to Macro - Sub Step7_Bonus_Questions() )
+
 Step 8 - Allocating ASX code against output (Refer to Macro - Sub Step8_Allocating_ASX())
+
 
 VBA Code
 
